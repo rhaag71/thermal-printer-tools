@@ -1,1 +1,24 @@
+# Generated label output
 label-2x1.pdf
+*.pdf
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Generated PDFs
+*.pdf
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Build artifacts
+dist/
+build/

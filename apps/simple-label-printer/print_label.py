@@ -3,51 +3,85 @@
 import argparse
 import subprocess
 from pathlib import Path
+
+import yaml
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 
-LABEL_W_IN = 1 + 29 / 32      # 1.90625"
-LABEL_H_IN = 31 / 32          # 0.96875"
 
-DEFAULT_PRINTER = "Rollo_Test"
-DEFAULT_X_OFFSET = "2"
-DEFAULT_Y_OFFSET = "0"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+DEFAULT_PRINTER_PROFILE = PROJECT_ROOT / "profiles/printers/rollo-x1038.yaml"
+DEFAULT_MEDIA_PROFILE = PROJECT_ROOT / "profiles/media/rollo-2x1-inventory.yaml"
 
 
-def make_pdf(path: Path, title: str, subtitle: str, note: str) -> None:
-    w = LABEL_W_IN * inch
-    h = LABEL_H_IN * inch
+def load_yaml(path: Path) -> dict:
+    with path.open("r", encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def inches(value) -> float:
+    """
+    Accepts:
+      1.90625
+      "1.90625"
+      "1.90625in"
+    """
+    if isinstance(value, (int, float)):
+        return float(value)
+
+    text = str(value).strip().lower().replace("in", "")
+    return float(text)
+
+
+def make_pdf(path: Path, media: dict, title: str, subtitle: str, note: str) -> None:
+    width_in = inches(media["actual_width"])
+    height_in = inches(media["actual_height"])
+
+    margin_in = inches(media.get("safe_margin", 0.06))
+
+    w = width_in * inch
+    h = height_in * inch
+    m = margin_in * inch
 
     c = canvas.Canvas(str(path), pagesize=(w, h))
 
-    # Safe border / debug frame
-    c.rect(0.06 * inch, 0.06 * inch, w - 0.12 * inch, h - 0.12 * inch)
+    # Debug/safe border
+    c.rect(m, m, w - 2 * m, h - 2 * m)
 
-    # Main text
+    # Main label content
     c.setFont("Helvetica-Bold", 13)
-    c.drawString(0.10 * inch, h - 0.24 * inch, title[:22])
+    c.drawString(m + 0.04 * inch, h - m - 0.16 * inch, title[:22])
 
     c.setFont("Helvetica", 9)
-    c.drawString(0.10 * inch, h - 0.42 * inch, subtitle[:32])
+    c.drawString(m + 0.04 * inch, h - m - 0.34 * inch, subtitle[:32])
 
     c.setFont("Helvetica", 8)
-    c.drawString(0.10 * inch, h - 0.60 * inch, note[:38])
+    c.drawString(m + 0.04 * inch, h - m - 0.52 * inch, note[:38])
 
-    # Footer
     c.setFont("Helvetica", 5)
-    c.drawRightString(w - 0.10 * inch, 0.10 * inch, "Workshop Label")
+    c.drawRightString(w - m - 0.02 * inch, m + 0.02 * inch, "Workshop Label")
 
     c.save()
 
 
-def print_pdf(path: Path, printer: str, x_offset: str, y_offset: str) -> None:
+def print_pdf(path: Path, printer_profile: dict, media: dict) -> None:
+    queue = printer_profile.get("cups_queue", "Rollo_Test")
+    quality = printer_profile.get("quality", "Draft")
+
+    width_in = inches(media["actual_width"])
+    height_in = inches(media["actual_height"])
+
+    x_offset = str(printer_profile.get("horizontal_offset", 2))
+    y_offset = str(printer_profile.get("vertical_offset", 0))
+
     cmd = [
         "lp",
-        "-d", printer,
-        "-o", f"media=Custom.{LABEL_W_IN}x{LABEL_H_IN}in",
+        "-d", queue,
+        "-o", f"media=Custom.{width_in}x{height_in}in",
         "-o", "print-scaling=none",
         "-o", "fit-to-page=false",
-        "-o", "cupsPrintQuality=Draft",
+        "-o", f"cupsPrintQuality={quality}",
         "-o", f"roAdjustHorizontal={x_offset}",
         "-o", f"roAdjustVertical={y_offset}",
         str(path),
@@ -57,26 +91,28 @@ def print_pdf(path: Path, printer: str, x_offset: str, y_offset: str) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Print a simple 2x1 Rollo workshop label.")
+    parser = argparse.ArgumentParser(description="Print a simple workshop thermal label.")
     parser.add_argument("--title", required=True)
     parser.add_argument("--subtitle", default="")
     parser.add_argument("--note", default="")
-    parser.add_argument("--printer", default=DEFAULT_PRINTER)
-    parser.add_argument("--x-offset", default=DEFAULT_X_OFFSET)
-    parser.add_argument("--y-offset", default=DEFAULT_Y_OFFSET)
+    parser.add_argument("--printer-profile", default=str(DEFAULT_PRINTER_PROFILE))
+    parser.add_argument("--media-profile", default=str(DEFAULT_MEDIA_PROFILE))
     parser.add_argument("--output", default="label-2x1.pdf")
     parser.add_argument("--no-print", action="store_true")
 
     args = parser.parse_args()
 
-    output = Path(args.output).resolve()
-    make_pdf(output, args.title, args.subtitle, args.note)
+    printer_profile = load_yaml(Path(args.printer_profile))
+    media_profile = load_yaml(Path(args.media_profile))
 
+    output = Path(args.output).resolve()
+
+    make_pdf(output, media_profile, args.title, args.subtitle, args.note)
     print(f"Created {output}")
 
     if not args.no_print:
-        print_pdf(output, args.printer, args.x_offset, args.y_offset)
-        print(f"Sent to {args.printer}")
+        print_pdf(output, printer_profile, media_profile)
+        print(f"Sent to {printer_profile.get('cups_queue', 'Rollo_Test')}")
 
 
 if __name__ == "__main__":

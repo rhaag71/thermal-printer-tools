@@ -1,0 +1,4 @@
+charset-normalizer==3.4.7
+pillow==12.3.0
+PyYAML==6.0.3
+reportlab==5.0.0
