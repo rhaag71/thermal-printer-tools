@@ -4,8 +4,11 @@ set -euo pipefail
 QUEUE_NAME="${1:-Rollo_X1038}"
 DEVICE_URI="${2:-}"
 
-PPD_SOURCE="drivers/workshop/rollo/rollo-x1038.ppd"
-FILTER_SOURCE="drivers/workshop/rollo/rastertorollo"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+PPD_SOURCE="$PROJECT_ROOT/drivers/workshop/rollo/rollo-x1038.ppd"
+FILTER_SOURCE="$PROJECT_ROOT/drivers/workshop/rollo/rastertorollo"
 
 CUPS_FILTER_DIR="/usr/lib/cups/filter"
 CUPS_MODEL_DIR="/usr/share/cups/model"
