@@ -66,7 +66,7 @@ def make_pdf(path: Path, media: dict, title: str, subtitle: str, note: str) -> N
 
 
 def print_pdf(path: Path, printer_profile: dict, media: dict) -> None:
-    queue = printer_profile.get("cups_queue", "Rollo_Test")
+    queue = printer_profile.get("cups_queue", "Rollo_X1038")
     quality = printer_profile.get("quality", "Draft")
 
     width_in = inches(media["actual_width"])
@@ -112,7 +112,7 @@ def main() -> None:
 
     if not args.no_print:
         print_pdf(output, printer_profile, media_profile)
-        print(f"Sent to {printer_profile.get('cups_queue', 'Rollo_Test')}")
+        print(f"Sent to {printer_profile.get('cups_queue', 'Rollo_X1038')}")
 
 
 if __name__ == "__main__":
