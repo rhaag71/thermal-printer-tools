@@ -1,0 +1,10 @@
+name: Rollo 2x1 Inventory
+units: inches
+
+nominal_width: 2.0
+nominal_height: 1.0
+
+actual_width: 1.90625
+actual_height: 0.96875
+
+safe_margin: 0.06

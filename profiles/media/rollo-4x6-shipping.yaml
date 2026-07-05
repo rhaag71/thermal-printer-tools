@@ -1,0 +1,14 @@
+name: Rollo 4x6 Shipping
+units: inches
+
+nominal_width: 4.0
+nominal_height: 6.0
+
+actual_width: 4.0
+actual_height: 6.0
+
+safe_margin: 0.06
+
+orientation: portrait
+
+media_tracking: Gap
