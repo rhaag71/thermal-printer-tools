@@ -1,0 +1,36 @@
+name: Citizen CT-S310A
+
+queue: Citizen_RAW_ESC_POS
+
+technology: direct_thermal
+
+protocol: escpos
+
+renderer: escpos
+
+normal_desktop_printing: false
+
+dpi: 203
+
+usb:
+  vendor_id: "2730"
+  product_id: "200f"
+  uri: "usb://CITIZEN/CT-S310?serial=009Y0230"
+  raw_device: "/dev/usb/lp0"
+
+bitmap:
+  printable_width_dots: 384
+  confirmed: true
+
+supports:
+  text: true
+  bitmap: true
+
+notes: |
+  Characterized 2026-07-07.
+  ESC/POS text verified.
+  ESC/POS raster bitmap verified.
+  Printable bitmap width confirmed to be 384 dots.
+
+  
+

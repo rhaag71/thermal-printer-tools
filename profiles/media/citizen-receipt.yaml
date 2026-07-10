@@ -1,0 +1,19 @@
+name: Citizen Receipt
+
+units: mm
+
+media_type: continuous
+
+nominal_width: 58
+
+actual_width: 58
+
+orientation: portrait
+
+printable_width_dots: 384
+
+safe_margin: 0
+
+notes: |
+  Verified on CT-S310A.
+  Continuous receipt paper.
