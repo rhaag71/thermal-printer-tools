@@ -8,7 +8,21 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 PPD_SOURCE="$PROJECT_ROOT/drivers/workshop/rollo/rollo-x1038.ppd"
-FILTER_SOURCE="$PROJECT_ROOT/drivers/workshop/rollo/rastertorollo"
+
+ARCH="$(uname -m)"
+
+case "$ARCH" in
+  x86_64)
+    FILTER_SOURCE="$PROJECT_ROOT/drivers/workshop/rollo/rastertorollo-x86_64"
+    ;;
+  armv6l|armv7l)
+    FILTER_SOURCE="$PROJECT_ROOT/drivers/workshop/rollo/rastertorollo-armv6"
+    ;;
+  *)
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+    ;;
+esac
 
 CUPS_FILTER_DIR="/usr/lib/cups/filter"
 CUPS_MODEL_DIR="/usr/share/cups/model"
