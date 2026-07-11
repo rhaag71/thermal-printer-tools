@@ -18,6 +18,9 @@ case "$ARCH" in
   armv6l|armv7l)
     FILTER_SOURCE="$PROJECT_ROOT/drivers/workshop/rollo/rastertorollo-armv6"
     ;;
+  aarch64|arm64)
+    FILTER_SOURCE="$PROJECT_ROOT/drivers/workshop/rollo/rastertorollo-aarch64"
+    ;;
   *)
     echo "Unsupported architecture: $ARCH"
     exit 1
