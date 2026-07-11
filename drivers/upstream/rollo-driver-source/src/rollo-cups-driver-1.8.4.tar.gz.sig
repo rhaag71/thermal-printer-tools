@@ -1,0 +1,1 @@
+/home/dev/src/aur/rollo-printer/rollo-cups-driver-1.8.4.tar.gz.sig
