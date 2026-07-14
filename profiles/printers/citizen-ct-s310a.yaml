@@ -22,6 +22,10 @@ bitmap:
   printable_width_dots: 384
   confirmed: true
 
+media:
+  paper_width_mm: 80
+  media_type: continuous
+
 supports:
   text: true
   bitmap: true
@@ -31,6 +35,8 @@ notes: |
   ESC/POS text verified.
   ESC/POS raster bitmap verified.
   Printable bitmap width confirmed to be 384 dots.
+  Uses 80mm thermal receipt paper. Media type is continuous roll. Printer is direct thermal. Printer uses ESC/POS protocol and renderer. Normal desktop printing is not supported. USB vendor ID is 2730, product ID is 200f, and the USB URI is usb://CITIZEN/CT-S310?serial=009Y0230. The raw device path is /dev/usb/lp0.
+  
 
   
 
